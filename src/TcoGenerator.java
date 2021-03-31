@@ -9,9 +9,10 @@ public class TcoGenerator {
 
     /**
      * Method for reading file
+     *
      * @param file - file for scanning
      * @return - file content as List
-     * **/
+     **/
 
     public static List readFile(File file) {
 
@@ -29,9 +30,10 @@ public class TcoGenerator {
 
     /**
      * Method for calculating the maximum nesting of headers in a file
+     *
      * @param file - file for scanning
      * @return - maximum nesting
-     * **/
+     **/
 
     public static int countMaxDepth(File file) {
         List<String> lines;
@@ -53,9 +55,10 @@ public class TcoGenerator {
 
     /**
      * Method for preparing table of contents
+     *
      * @param file - file for scanning
      * @return - table of contents with tabs
-     * **/
+     **/
 
     public static String generateTco(File file) {
 
@@ -66,22 +69,24 @@ public class TcoGenerator {
         StringBuilder result = new StringBuilder();
 
         for (String inputString : lines) {
-            char[] chars = inputString.toCharArray();
-            int levelIndex = 0;
-            for (int j = 1; j < chars.length; j++) {
-                if (chars[j - 1] == '#') {
-                    levelIndex++;
+            if (!inputString.isEmpty()) {
+                char[] chars = inputString.toCharArray();
+                int levelIndex = 0;
+                for (int j = 1; j < chars.length; j++) {
+                    if (chars[j - 1] == '#') {
+                        levelIndex++;
+                    }
+                    if (chars[j] == '#' && chars[j - 1] == '#') {
+                        result.append("\t");
+                    }
                 }
-                if (chars[j] == '#' && chars[j - 1] == '#') {
-                    result.append("\t");
+                if (chars[0] == '#') {
+                    result.append(indexes[levelIndex] + 1).append(". [")
+                            .append(inputString.replaceAll("#", "").trim())
+                            .append("]").append("(#").append(inputString.replaceAll("#", "")
+                            .toLowerCase().trim().replaceAll(" ", "-")).append(")\n");
                 }
-            }
-            indexes[levelIndex]++;
-            if (chars[0] == '#') {
-                result.append(indexes[levelIndex]).append(". [")
-                        .append(inputString.replaceAll("#", "").trim())
-                        .append("]").append("(#").append(inputString.replaceAll("#", "")
-                        .toLowerCase().trim().replaceAll(" ", "-")).append(")\n");
+                indexes[levelIndex]++;
             }
         }
         return result.toString();
